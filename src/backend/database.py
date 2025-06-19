@@ -1,10 +1,11 @@
 import os
+import re
+import psycopg2
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
-import re
-import psycopg2
+from urllib.parse import quote_plus  # new import
 
 # Load environment variables from .env if present
 load_dotenv()
@@ -40,42 +41,17 @@ else:
     POSTGRES_HOST = os.getenv('POSTGRES_HOST', 'localhost')
     POSTGRES_PORT = os.getenv('POSTGRES_PORT', '5432')
 
-# --- Ensure database exists ---
-def ensure_database():
-    try:
-        conn = psycopg2.connect(
-            dbname='postgres',
-            user=POSTGRES_USER,
-            password=POSTGRES_PASSWORD,
-            host=POSTGRES_HOST,
-            port=POSTGRES_PORT
-        )
-        conn.autocommit = True
-        cur = conn.cursor()
-        cur.execute(
-            "SELECT 1 FROM pg_database WHERE datname = %s", (POSTGRES_DB,)
-        )
-        exists = cur.fetchone()
-        if not exists:
-            # Use SQL identifiers safely
-            cur.execute(
-                'CREATE DATABASE %s' % psycopg2.extensions.quote_ident(
-                    POSTGRES_DB, cur
-                )
-            )
-        cur.close()
-        conn.close()
-    except Exception as e:
-        print(f"[DB INIT] Could not ensure database exists: {e}")
-
-
-ensure_database()
+# URL encode username and password
+POSTGRES_USER_ENC = quote_plus(POSTGRES_USER)
+POSTGRES_PASSWORD_ENC = quote_plus(POSTGRES_PASSWORD)
 
 SQLALCHEMY_DATABASE_URL = (
-    f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}"
+    f"postgresql://{POSTGRES_USER_ENC}:{POSTGRES_PASSWORD_ENC}"
     f"@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 )
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base() 
+Base = declarative_base()
+
+# ...existing code...

@@ -33,24 +33,6 @@ def get_db():
         db.close()
 
 
-@app.get("/", tags=["Health"])
-def health_check(db: Session = Depends(get_db)):
-    try:
-        db.execute("SELECT 1")
-        return Response(content="Database is up", status_code=200)
-    except Exception:
-        return Response(content="Database is down", status_code=503)
-
-
-@app.get("/health", tags=["Health"])
-def health_check_alias(db: Session = Depends(get_db)):
-    try:
-        db.execute("SELECT 1")
-        return Response(content="Database is up", status_code=200)
-    except Exception:
-        return Response(content="Database is down", status_code=503)
-
-
 # Application Endpoints
 @app.get("/applications/", response_model=List[schemas.Application])
 def list_applications(
@@ -125,4 +107,4 @@ def delete_tag(tag_id: int, db: Session = Depends(get_db)):
 # Health Check Endpoints
 @app.get("/applications/{app_id}/health_checks/", response_model=List[schemas.HealthCheck])
 def get_health_checks(app_id: int, limit: int = 20, db: Session = Depends(get_db)):
-    return crud.get_health_checks(db, app_id, limit=limit) 
+    return crud.get_health_checks(db, app_id, limit=limit)

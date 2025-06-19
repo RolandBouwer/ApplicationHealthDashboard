@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Response
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from .database import SessionLocal
 
@@ -13,19 +14,11 @@ def get_db():
         db.close()
 
 
-@router.get("/", tags=["Health"])
+@router.get("/health", tags=["Health"])
 def health_check(db: Session = Depends(get_db)):
     try:
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         return Response(content="Database is up", status_code=200)
-    except Exception:
+    except Exception as e:
+        print(f"Health check DB error: {e}")  # For debugging
         return Response(content="Database is down", status_code=503)
-
-
-@router.get("/health", tags=["Health"])
-def health_check_alias(db: Session = Depends(get_db)):
-    try:
-        db.execute("SELECT 1")
-        return Response(content="Database is up", status_code=200)
-    except Exception:
-        return Response(content="Database is down", status_code=503) 

@@ -19,6 +19,8 @@ import TagManagerModal from './components/TagManagerModal'
 import TrendsModal from './components/TrendsModal'
 import { getApplications, createApplication, updateApplication, deleteApplication, getTags, createTag, deleteTag } from './api'
 import './App.css'
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 function filterApps(apps, search) {
   if (!search) return apps;
@@ -127,6 +129,48 @@ function App() {
     setTags(t => t.filter(tg => tg.id !== tag.id));
   }
 
+  function handleExportPDF() {
+    const doc = new jsPDF();
+    // Production section
+    doc.text('Production Applications', 14, 16);
+    const prodData = prodApps.map(app => {
+      const lastCheck = app.health_checks && app.health_checks[0];
+      return [
+        app.name,
+        app.url,
+        lastCheck?.status === 'up' ? 'Up' : 'Down',
+        lastCheck?.response_time != null ? lastCheck.response_time.toFixed(2) + 's' : '-'
+      ];
+    });
+    autoTable(doc, {
+      head: [['Name', 'URL', 'Status', 'Response Time']],
+      body: prodData,
+      startY: 22,
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [37, 99, 235] },
+    });
+    // Non-Production section
+    let nextY = doc.lastAutoTable.finalY + 10;
+    doc.text('Non-Production Applications', 14, nextY);
+    const nonProdData = nonProdApps.map(app => {
+      const lastCheck = app.health_checks && app.health_checks[0];
+      return [
+        app.name,
+        app.url,
+        lastCheck?.status === 'up' ? 'Up' : 'Down',
+        lastCheck?.response_time != null ? lastCheck.response_time.toFixed(2) + 's' : '-'
+      ];
+    });
+    autoTable(doc, {
+      head: [['Name', 'URL', 'Status', 'Response Time']],
+      body: nonProdData,
+      startY: nextY + 6,
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [37, 99, 235] },
+    });
+    doc.save('app-health-report.pdf');
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -172,6 +216,9 @@ function App() {
               <Button variant="outlined" color="primary" onClick={() => setTagModalOpen(true)}>
                 Manage Tags
               </Button>
+              <Button variant="outlined" color="secondary" onClick={handleExportPDF}>
+                Export To PDF
+              </Button>
             </div>
           </div>
           {loading ? (
@@ -205,41 +252,45 @@ function App() {
               </Box>
               <div role="tabpanel" hidden={activeTab !== 0}>
                 {activeTab === 0 && (
-                  <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-                    {prodApps.length === 0 && 
-                      <div className="col-span-full text-center py-8 text-gray-500 dark:text-gray-400">
-                        No production apps found.
-                      </div>
-                    }
-                    {prodApps.map(app => (
-                      <AppCard
-                        key={app.id}
-                        app={app}
-                        onShowTrends={setTrendsApp}
-                        onEdit={(app) => { setEditApp(app); setModalOpen(true); }}
-                        onDelete={handleDeleteApp}
-                      />
-                    ))}
+                  <div className="flex justify-center">
+                    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 w-full max-w-7xl mx-auto px-2 sm:px-4 mb-8">
+                      {prodApps.length === 0 && 
+                        <div className="col-span-full text-center py-8 text-gray-500 dark:text-gray-400">
+                          No production apps found.
+                        </div>
+                      }
+                      {prodApps.map(app => (
+                        <AppCard
+                          key={app.id}
+                          app={app}
+                          onShowTrends={setTrendsApp}
+                          onEdit={(app) => { setEditApp(app); setModalOpen(true); }}
+                          onDelete={handleDeleteApp}
+                        />
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
               <div role="tabpanel" hidden={activeTab !== 1}>
                 {activeTab === 1 && (
-                  <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-                    {nonProdApps.length === 0 && 
-                      <div className="col-span-full text-center py-8 text-gray-500 dark:text-gray-400">
-                        No non-production apps found.
-                      </div>
-                    }
-                    {nonProdApps.map(app => (
-                      <AppCard
-                        key={app.id}
-                        app={app}
-                        onShowTrends={setTrendsApp}
-                        onEdit={(app) => { setEditApp(app); setModalOpen(true); }}
-                        onDelete={handleDeleteApp}
-                      />
-                    ))}
+                  <div className="flex justify-center">
+                    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 w-full max-w-7xl mx-auto px-2 sm:px-4 mb-8">
+                      {nonProdApps.length === 0 && 
+                        <div className="col-span-full text-center py-8 text-gray-500 dark:text-gray-400">
+                          No non-production apps found.
+                        </div>
+                      }
+                      {nonProdApps.map(app => (
+                        <AppCard
+                          key={app.id}
+                          app={app}
+                          onShowTrends={setTrendsApp}
+                          onEdit={(app) => { setEditApp(app); setModalOpen(true); }}
+                          onDelete={handleDeleteApp}
+                        />
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>

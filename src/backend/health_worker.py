@@ -3,7 +3,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from . import crud, database
 import time
 
-CHECK_INTERVAL = 60  # seconds
+CHECK_INTERVAL = 3600  # seconds
 
 
 def check_health():

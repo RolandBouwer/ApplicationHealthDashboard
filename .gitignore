@@ -1,5 +1,6 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 
@@ -129,7 +130,7 @@ celerybeat.pid
 
 # Environments
 .env
-.venv
+**/venv/
 env/
 venv/
 ENV/
@@ -192,3 +193,30 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+# Node
+node_modules/
+**/node_modules/
+
+# Vite
+dist/
+**/dist/
+.vite/
+**/.vite/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log
+*.log
+
+# Git
+.git/
+.gitignore
+.dockerignore
+
+# Editor
+.vscode/
+.idea/

@@ -10,12 +10,22 @@
 - **Status**: Card shadow and badge color indicate up (green) or down (red)
 - **Edge Browser**: Overlay styling improved for better visibility
 
+## Screenshots
+
+### Frontend
+![Frontend UI](docs/frontend.png)
+
+### Backend
+![Backend UI](docs/backend.png)
+
 ## Backend
 - Health endpoints (`/` and `/health`) are now in `src/backend/health.py`
 - Health worker runs automatically with backend (no separate process needed)
 
 ## Setup
-- See previous instructions for backend and frontend setup
+- See [docs/front-end-setup.md](docs/front-end-setup.md) for frontend setup
+- See [docs/backend-setup.md](docs/backend-setup.md) for backend setup
+- See [docs/docker-usage.md](docs/docker-usage.md) for Docker usage
 
 ## Notes
 - If you see "No checks yet", wait 1 minute for the health worker to run

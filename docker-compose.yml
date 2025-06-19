@@ -1,3 +1,4 @@
+# Docker Compose for App Health Dashboard (backend + frontend + db)
 version: '3.8'
 
 services:
@@ -14,7 +15,9 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   backend:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     depends_on:
       - db
     environment:
@@ -29,6 +32,16 @@ services:
     working_dir: /app
     volumes:
       - ./src/backend:/app
+
+  frontend:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    # For Azure Container Apps or App Service, adjust ports and env as needed
 
 volumes:
   pgdata: 

@@ -10,4 +10,5 @@
 - UI/UX improvements (gear menu, overlays, accessibility)
 - New documentation: frontend setup, Docker usage, local Postgres with Docker
 - Dockerfile for backend moved to `src/backend/Dockerfile`
-- Screenshots added to README 
+- Screenshots added to README
+- Database schema & seed now provided as SQL script (`docs/db-init.sql`); docs updated 

@@ -15,7 +15,7 @@ class Tag(TagBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class HealthCheckBase(BaseModel):
@@ -28,7 +28,7 @@ class HealthCheck(HealthCheckBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ApplicationBase(BaseModel):
@@ -47,4 +47,4 @@ class Application(ApplicationBase):
     health_checks: List[HealthCheck] = []
 
     class Config:
-        orm_mode = True 
+        from_attributes = True 

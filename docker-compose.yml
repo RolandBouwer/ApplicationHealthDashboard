@@ -1,47 +1,38 @@
-# Docker Compose for App Health Dashboard (backend + frontend + db)
+# Docker Compose for App Health Dashboard (Azure App Service)
 version: '3.8'
 
 services:
-  db:
-    image: postgres:15
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: app_health
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-
   backend:
     build:
-      context: .
+      context: ./src/backend
       dockerfile: Dockerfile
-    depends_on:
-      - db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: app_health
-      POSTGRES_HOST: db
-      POSTGRES_PORT: 5432
+      # Set these in Azure App Service configuration
+      # Example for Azure Postgres:
+      # POSTGRES_HOST=your-db-server.postgres.database.azure.com
+      # POSTGRES_PORT=5432
+      # POSTGRES_DB=app_health
+      # POSTGRES_USER=youruser@your-db-server
+      # POSTGRES_PASSWORD=yourpassword
+      # Example connection string:
+      # postgresql://youruser@your-db-server:yourpassword@your-db-server.postgres.database.azure.com:5432/app_health
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "8000:8000"
     command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
     working_dir: /app
-    volumes:
-      - ./src/backend:/app
+    # No local volume mount in Azure
 
   frontend:
     build:
       context: ./src/frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:80"
+      - "80:80"
     depends_on:
       - backend
-    # For Azure Container Apps or App Service, adjust ports and env as needed
-
-volumes:
-  pgdata: 
+    # For Azure App Service, ensure API URL points to backend container or App Service URL 

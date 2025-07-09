@@ -5,5 +5,9 @@ psycopg2-binary
 apscheduler
 requests
 python-dotenv 
+<<<<<<< HEAD
 certifi
 python-certifi-win32; platform_system == 'Windows'
+=======
+email-validator
+>>>>>>> 9296510e7fb279a50c52356805bb8103beca5a21

@@ -6,7 +6,13 @@ import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
 
 export default function AppCard({ app, onShowTrends, onEdit, onDelete }) {
-  const lastCheck = app.health_checks && app.health_checks[0];
+  // Determine the most recent health check
+  const lastCheck = app.health_checks && app.health_checks.length > 0
+    ? app.health_checks.reduce((latest, check) =>
+        new Date(check.checked_at) > new Date(latest.checked_at) ? check : latest,
+        app.health_checks[0]
+      )
+    : null;
   let shadowColor = 'shadow-lg';
   if (lastCheck) {
     shadowColor = lastCheck.status === 'up'
@@ -21,9 +27,10 @@ export default function AppCard({ app, onShowTrends, onEdit, onDelete }) {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+  
   return (
     <div
-      className={`w-full max-w-sm h-full flex flex-col bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-600 dark:hover:border-blue-500 transition-all duration-200 p-4 group ${shadowColor} hover:shadow-2xl relative`}
+      className={`w-full flex flex-col bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-600 dark:hover:border-blue-500 transition-all duration-200 p-4 group ${shadowColor} hover:shadow-2xl relative`}
       style={{
         // Overlay for Edge browser: subtle background and border
         boxShadow: shadowColor.includes('green')
@@ -58,7 +65,7 @@ export default function AppCard({ app, onShowTrends, onEdit, onDelete }) {
         </Menu>
       </div>
       <div className="mb-2">
-        <a href={app.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 text-sm break-all hover:underline">
+        <a href={app.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 text-sm break-words hover:underline">
           {app.url}
         </a>
       </div>
@@ -89,4 +96,4 @@ export default function AppCard({ app, onShowTrends, onEdit, onDelete }) {
       </Button>
     </div>
   );
-} 
+}

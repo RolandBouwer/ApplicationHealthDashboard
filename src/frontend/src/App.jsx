@@ -21,6 +21,7 @@ import { getApplications, createApplication, updateApplication, deleteApplicatio
 import './App.css'
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import logo from './assets/logo.png'; 
 
 function filterApps(apps, search) {
   if (!search) return apps;
@@ -178,12 +179,9 @@ function App() {
         <AppBar position="static" color={darkMode ? 'default' : 'primary'} sx={{ background: darkMode ? '#111827' : '#fff', color: darkMode ? '#fff' : '#111827', boxShadow: 1 }}>
           <Toolbar className="flex flex-wrap gap-2 justify-between">
             <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-              <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white text-2xl font-bold shadow-md mr-2">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-7 h-7">
-                  <circle cx="12" cy="12" r="10" fill="#2563eb" />
-                  <path stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h8m-4-4v8" />
-                </svg>
-              </span>
+              {/* <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white text-2xl font-bold shadow-md mr-2"> */}
+                <img src={logo} alt="Logo" className="w-10 h-10 mr-2" />
+              {/* </span> */}
               <Typography variant="h6" component="div" sx={{ fontWeight: 700 }} className="text-2xl font-bold text-gray-900 dark:text-white">App Health Dashboard</Typography>
             </Box>
             <Box sx={{ flexGrow: 1 }} />
